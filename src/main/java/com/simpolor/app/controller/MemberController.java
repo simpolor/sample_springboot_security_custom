@@ -25,26 +25,26 @@ public class MemberController {
 	@Autowired
 	MemberService userService;
 	
-	@RequestMapping("/user/login")
+	@RequestMapping("/member/login")
 	public String userLogin() {
 		return "userLogin";
 	}
 	
-	@RequestMapping("/user/home")
+	@RequestMapping("/member/home")
 	public ModelAndView userHome() {
 		
 		
 		System.out.println("==================");
-		System.out.println("userHome");
+		System.out.println("memberHome");
 		System.out.println("==================");
 		
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("userHome");
+		mav.setViewName("memberHome");
 		
 		return mav;
 	}
 	
-	@RequestMapping("/user/add")
+	/*@RequestMapping("/user/add")
 	public ModelAndView userAdd() {
 		
 		Member userTemp = new Member(); 
@@ -83,6 +83,6 @@ public class MemberController {
 		mav.setViewName("userAdd");
 		
 		return mav;
-	}
+	}*/
 	
 }

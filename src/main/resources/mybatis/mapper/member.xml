@@ -3,40 +3,37 @@
 
 <mapper namespace="com.simpolor.app.repository.MemberRepository">
 
-	<select id="selectMemeber" parameterType="String" resultType="member"> 
+	<select id="selectMember" parameterType="String" resultType="member"> 
 		SELECT * 
-		  FROM user 
-		 WHERE username = #{username} 
+		  FROM member 
+		 WHERE member_id = #{member_id} 
 	</select>
-	 
-	<select id="selectMemeberRoleList" parameterType="String" resultType="memberRole">
+	
+	<insert id="insertMember" parameterType="member"> 
+		INSERT INTO member (member_id, member_pw, member_name, member_email) 
+		     VALUES (#{member_id}, #{member_pw}, #{member_name}, #{member_email}) 
+	</insert> 
+	
+	<delete id="deleteMember" parameterType="String"> 
+		DELETE FROM member 
+		      WHERE member_id = #{member_id} 
+	</delete> 
+	
+	<select id="selectMemberRoleList" parameterType="String" resultType="memberRole">
 		SELECT member_role 
 		  FROM member_role 
 		 WHERE member_id = #{member_id} 
 	</select>
 	
-	<insert id="insertMember" parameterType="Memeber"> 
-		INSERT INTO user (member_id, member_pw, member_name, member_email) 
-		     VALUES (#{member_id}, #{member_pw}, #{member_name}, #{member_email}) 
-	</insert> 
-	
-	<insert id="insertMemberRole" parameterType="org.springframework.security.core.GrantedAuthority"> 
+	<insert id="insertMemberRole" parameterType="memberRole"> 
 		INSERT INTO member_role (member_id, member_role) 
-		VALUES 
-		<foreach item="item" index="index" collection="authorities" separator=","> 
-			(#{username}, #{item.authority}) 
-		</foreach> 
+		VALUES (#{member_id}, #{member_role}) 
 	</insert> 
 	
-	<delete id="deleteUser" parameterType="String"> 
-		DELETE FROM user 
-		      WHERE username = #{username} 
+	<delete id="deleteMemberRole" parameterType="String"> 
+		DELETE FROM member_role 
+		      WHERE member_id = #{member_id} 
 	</delete> 
-	
-	<delete id="deleteAuthority" parameterType="String"> 
-		DELETE FROM authority 
-		      WHERE username = #{username} 
-	</delete>
 
 
 </mapper>

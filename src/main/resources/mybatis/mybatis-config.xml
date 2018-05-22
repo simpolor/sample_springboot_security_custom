@@ -5,6 +5,7 @@
         <!-- <package name="com.simpolor.app.model" />-->
         <typeAlias alias="demo" type="com.simpolor.app.domain.Demo" />
         <typeAlias alias="member" type="com.simpolor.app.domain.Member" />
+        <typeAlias alias="memberRole" type="com.simpolor.app.domain.MemberRole" />
     </typeAliases>
     
     

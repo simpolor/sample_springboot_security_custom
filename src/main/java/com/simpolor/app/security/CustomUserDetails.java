@@ -14,11 +14,6 @@ public class CustomUserDetails implements UserDetails {
 	private boolean isAccountNonLocked;
 	private boolean isCredentialsNonExpired;
 	private boolean isEnabled;
-	
-	CustomUserDetails(){
-		
-	}
-	
 	private Collection<? extends GrantedAuthority> authorities;
 	
 	public String getUsername() {
