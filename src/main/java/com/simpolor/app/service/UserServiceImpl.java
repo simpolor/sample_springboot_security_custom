@@ -4,8 +4,6 @@ import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,19 +20,8 @@ public class UserServiceImpl implements UserService {
 	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-		User user = userRepository.readUser(username);
-        user.setAuthorities(getAuthorities(username));
-       
-        return user;
-	}
-
-	@Override
 	public Collection<GrantedAuthority> getAuthorities(String username) {
-		
 		Collection<GrantedAuthority> authorities = userRepository.readAuthority(username); 
-		
 		return authorities;
 	}
 	
@@ -64,8 +51,5 @@ public class UserServiceImpl implements UserService {
 	public PasswordEncoder passwordEncoder() { 
 		return this.passwordEncoder; 
 	}
-	
-
-	
 
 }

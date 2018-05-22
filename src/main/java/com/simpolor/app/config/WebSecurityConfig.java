@@ -9,34 +9,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import com.simpolor.app.security.CustomAccessDeniedHandler;
-import com.simpolor.app.security.CustomLogoutSuccessHandler;
-import com.simpolor.app.service.UserService;
+import com.simpolor.app.security.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
-
-	@Autowired // 시큐리티 작업에 대한 인터셉터
-	private CustomSecurityInterceptor customSecurityInterceptor; 
-	
-	@Autowired // 로그인에 대한 처리
-	private CustomAuthenticationProvider customAuthProvider; 
-	
-	@Autowired // 로그인 성공에 대한 처리
-    private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
-	
-	@Autowired // 로그인실패에 대한 처리
-    private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
-	
-	@Autowired // 접근 권한에 대한 처리
-    private CustomAccessDeniedHandler customAccessDeniedHandler;
 	
 	@Autowired
-	private CustomLogoutSuccessHandler customLogoutSuccessHandler;
-	
-	@Autowired
-	UserService userService;
+	private CustomUserDetailsService customUserDetailsService;
 	
 	/**
 	 * 스프링 시큐리티의 필터 연결을 설정
@@ -73,12 +53,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 			// 로그인 설정
 			.and()
 			.formLogin()
-				.loginPage("/user/login") // 로그인 페이지 ( 컨트롤러를 매핑하지 않으면 기본 제공 로그인 페이지 호출 )
-				.loginProcessingUrl("/user/login") // 로그인 프로세스 처리할 URL
-				.successHandler(customAuthenticationSuccessHandler) // 로그인 성공시 이동할 핸들러
-				.failureHandler(customAuthenticationFailureHandler) // 로그인 성공시 이동할 핸들러
-				.usernameParameter("user_id")
-				.passwordParameter("user_pw")
+//				.loginPage("/user/login") // 로그인 페이지 ( 컨트롤러를 매핑하지 않으면 기본 제공 로그인 페이지 호출 )
+//				.loginProcessingUrl("/user/login") // 로그인 프로세스 처리할 URL
+//				.successHandler(customAuthenticationSuccessHandler) // 로그인 성공시 이동할 핸들러
+//				.failureHandler(customAuthenticationFailureHandler) // 로그인 성공시 이동할 핸들러
+//				.usernameParameter("user_id")
+//				.passwordParameter("user_pw")
 		
 			// 비밀번호 자동저장 설정
 			.and()
@@ -126,7 +106,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
     }*/
 	
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userService).passwordEncoder(userService.passwordEncoder());
+		auth.userDetailsService(customUserDetailsService).passwordEncoder(customUserDetailsService.passwordEncoder());
 	}
 
 }
