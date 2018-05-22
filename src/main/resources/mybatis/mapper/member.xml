@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.simpolor.app.repository.MemberRepository">
+
+	<select id="selectMemeber" parameterType="String" resultType="member"> 
+		SELECT * 
+		  FROM user 
+		 WHERE username = #{username} 
+	</select>
+	 
+	<select id="selectMemeberRoleList" parameterType="String" resultType="memberRole">
+		SELECT member_role 
+		  FROM member_role 
+		 WHERE member_id = #{member_id} 
+	</select>
+	
+	<insert id="insertMember" parameterType="Memeber"> 
+		INSERT INTO user (member_id, member_pw, member_name, member_email) 
+		     VALUES (#{member_id}, #{member_pw}, #{member_name}, #{member_email}) 
+	</insert> 
+	
+	<insert id="insertMemberRole" parameterType="org.springframework.security.core.GrantedAuthority"> 
+		INSERT INTO member_role (member_id, member_role) 
+		VALUES 
+		<foreach item="item" index="index" collection="authorities" separator=","> 
+			(#{username}, #{item.authority}) 
+		</foreach> 
+	</insert> 
+	
+	<delete id="deleteUser" parameterType="String"> 
+		DELETE FROM user 
+		      WHERE username = #{username} 
+	</delete> 
+	
+	<delete id="deleteAuthority" parameterType="String"> 
+		DELETE FROM authority 
+		      WHERE username = #{username} 
+	</delete>
+
+
+</mapper>

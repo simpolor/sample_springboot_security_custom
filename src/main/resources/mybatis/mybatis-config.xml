@@ -4,12 +4,12 @@
     <typeAliases>
         <!-- <package name="com.simpolor.app.model" />-->
         <typeAlias alias="demo" type="com.simpolor.app.domain.Demo" />
-        <typeAlias alias="user" type="com.simpolor.app.domain.User" />
+        <typeAlias alias="member" type="com.simpolor.app.domain.Member" />
     </typeAliases>
     
     
     <mappers>
         <mapper resource="mybatis/mapper/demo.xml"/>
-        <mapper resource="mybatis/mapper/user.xml"/>
+        <mapper resource="mybatis/mapper/member.xml"/>
     </mappers>
 </configuration>

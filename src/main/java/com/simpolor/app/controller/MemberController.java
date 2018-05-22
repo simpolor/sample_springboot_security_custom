@@ -16,14 +16,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.simpolor.app.domain.User;
-import com.simpolor.app.service.UserService;
+import com.simpolor.app.domain.Member;
+import com.simpolor.app.service.MemberService;
 
 @Controller
-public class UserController {
+public class MemberController {
 
 	@Autowired
-	UserService userService;
+	MemberService userService;
 	
 	@RequestMapping("/user/login")
 	public String userLogin() {
@@ -47,7 +47,7 @@ public class UserController {
 	@RequestMapping("/user/add")
 	public ModelAndView userAdd() {
 		
-		User userTemp = new User(); 
+		Member userTemp = new Member(); 
 		userTemp.setUsername("user1"); 
 		userTemp.setPassword("pass1"); 
 		userTemp.setAccountNonExpired(true); 
@@ -61,7 +61,7 @@ public class UserController {
 		
 		userService.createUser(userTemp);
 		
-		User user = userService.readUser(userTemp.getUsername());
+		Member user = userService.readUser(userTemp.getUsername());
 		
 		assertThat(user.getUsername(), is(userTemp.getUsername()));
 		

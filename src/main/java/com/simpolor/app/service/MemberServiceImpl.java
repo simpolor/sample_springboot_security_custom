@@ -8,14 +8,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.simpolor.app.domain.User;
-import com.simpolor.app.repository.UserRepository;
+import com.simpolor.app.domain.Member;
+import com.simpolor.app.repository.MemberRepository;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class MemberServiceImpl implements MemberService {
 
 	@Autowired
-	UserRepository userRepository;
+	MemberRepository userRepository;
 	
 	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -26,14 +26,14 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override 
-	public User readUser(String username) { 
-		User user = userRepository.readUser(username); 
+	public Member readUser(String username) { 
+		Member user = userRepository.readUser(username); 
 		user.setAuthorities(userRepository.readAuthority(username)); 
 		return user; 
 	} 
 	
 	@Override 
-	public void createUser(User user) { 
+	public void createUser(Member user) { 
 		String rawPassword = user.getPassword(); 
 		String encodedPassword = new BCryptPasswordEncoder().encode(rawPassword); 
 		user.setPassword(encodedPassword); 

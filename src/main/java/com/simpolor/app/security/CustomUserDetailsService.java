@@ -7,18 +7,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.simpolor.app.domain.User;
-import com.simpolor.app.service.UserService;
+import com.simpolor.app.domain.Member;
+import com.simpolor.app.service.MemberService;
 
 @Component
 public class CustomUserDetailsService implements UserDetailsService {
 
 	@Autowired
-	private UserService userService;
+	private MemberService userService;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userService.readUser(username);
+		Member member = userService.readUser(username);
         user.setAuthorities(userService.getAuthorities(username));
        
         return user;
