@@ -26,35 +26,28 @@ public class CustomUserDetailsService implements UserDetailsService {
 	private MemberService memberService;
 	
 	@Override
-	public UserDetails loadUserByUsername(String member_id) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
 		logger.info("=========================================================");
 		logger.info("[R] CustomUserDetailsService.loadUserByUsername");
 		logger.info("=========================================================");
 		
-		logger.info("-- member_id : {}", member_id);
+		logger.info("-- username : {}", username);
 		
-		Member member = memberService.getMember(member_id);
+		Member member = memberService.getMember(username);
 		if(member != null) {
-			Collection<GrantedAuthority> grantedAuthorities = memberService.getMemberRole(member_id);
+			Collection<GrantedAuthority> grantedAuthorities = memberService.getMemberRole(username);
 			
 			// Spring security의 User의 값 형태
-			String username = member.getMember_id();
-			String password = passwordEncoder().encode(member.getMember_pw());
-			boolean enabled = true;
-			boolean accountNonExpired = true;
-			boolean credentialsNonExpired = true;
-			boolean accountNonLocked = true;
+			String memberId = member.getMember_id();
+			String memberPw = passwordEncoder().encode(member.getMember_pw());
 			
-			System.out.println("-- username : "+username);
-			System.out.println("-- password : "+password);
+			logger.info("-- memberId : "+memberId);
+			logger.info("-- memberPw : "+memberPw);
 			
-			User user = new User(username, password, enabled, 
-					accountNonExpired, credentialsNonExpired, accountNonLocked, grantedAuthorities);
-			
-			return user;
+			return new User(memberId, memberPw, grantedAuthorities);
 		}else {
-			throw new BadCredentialsException("존재하지 않는 사용자입니다.");
+			throw new UsernameNotFoundException("Username not found");
 		}
 	}
 
