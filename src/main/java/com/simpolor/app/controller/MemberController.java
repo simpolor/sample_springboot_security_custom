@@ -1,33 +1,37 @@
 package com.simpolor.app.controller;
 
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import javax.servlet.http.HttpServletRequest;
 
-import java.util.Collection;
-import java.util.Iterator;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.simpolor.app.domain.Member;
 import com.simpolor.app.service.MemberService;
 
 @Controller
 public class MemberController {
 
+	final Logger logger = LoggerFactory.getLogger(MemberController.class);
+	
 	@Autowired
 	MemberService userService;
 	
-	@RequestMapping("/member/login")
-	public String userLogin() {
-		return "userLogin";
+	@RequestMapping(value="/member/login", method=RequestMethod.GET)
+	public String memberLogin(HttpServletRequest request) {
+		
+		String referer = request.getHeader("Referer");
+		logger.info("-- referer : {}", referer);
+		
+		// 저장할때 부터 "/member/login" 과 동일한지 비교가 필요
+		if(request.getSession().getAttribute("refererUrl") == null) {
+			  request.getSession().setAttribute("refererUrl", referer);
+		}
+		
+		return "memberLogin";
 	}
 	
 	@RequestMapping("/member/home")

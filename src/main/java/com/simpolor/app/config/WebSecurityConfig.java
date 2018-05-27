@@ -9,7 +9,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.simpolor.app.security.CustomAuthenticationFailureHandler;
 import com.simpolor.app.security.CustomAuthenticationProvider;
+import com.simpolor.app.security.CustomAuthenticationSuccessHandler;
 import com.simpolor.app.security.CustomUserDetailsService;
 
 @Configuration
@@ -21,6 +23,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired // 로그인에 대한 처리
 	private CustomAuthenticationProvider customAuthenticationProvider; 
+	
+	@Autowired // 로그인 성공에 대한 처리
+    private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+	
+	@Autowired // 로그인실패에 대한 처리
+    private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 	
 	/**
 	 * 스프링 시큐리티의 필터 연결을 설정
@@ -41,13 +49,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	protected void configure(HttpSecurity http) throws Exception{
 		http
 			// Cross site request forgery (사이트간 요청 위조 [사용 권장] )
-			.csrf().disable()
+			//.csrf().disable()
 			
 			// URL에 따른 권한 체크 
 			.authorizeRequests()
-				.antMatchers("/user/login").permitAll()
-				.antMatchers("/user/add").permitAll()
-				.antMatchers("/user/**").hasAnyAuthority("USER")
+				.antMatchers("/member/login").permitAll()
+				.antMatchers("/member/add").permitAll()
+				.antMatchers("/member/**").hasAnyAuthority("USER")
 				.antMatchers("/admin/login").permitAll()
 				.antMatchers("/admin/security").authenticated()
 				.antMatchers("/admin/**").hasAnyAuthority("ADMIN")
@@ -57,12 +65,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 			// 로그인 설정
 			.and()
 			.formLogin()
-//				.loginPage("/user/login") // 로그인 페이지 ( 컨트롤러를 매핑하지 않으면 기본 제공 로그인 페이지 호출 )
-//				.loginProcessingUrl("/user/login") // 로그인 프로세스 처리할 URL
-//				.successHandler(customAuthenticationSuccessHandler) // 로그인 성공시 이동할 핸들러
-//				.failureHandler(customAuthenticationFailureHandler) // 로그인 성공시 이동할 핸들러
-//				.usernameParameter("user_id")
-//				.passwordParameter("user_pw")
+				.loginPage("/member/login") // 로그인 페이지 ( 컨트롤러를 매핑하지 않으면 기본 제공 로그인 페이지 호출 )
+				.loginProcessingUrl("/member/login") // 로그인 프로세스 처리할 URL
+				.usernameParameter("member_id")
+				.passwordParameter("member_pw")
+				.successHandler(customAuthenticationSuccessHandler) // 로그인 성공시 이동할 핸들러
+				.failureHandler(customAuthenticationFailureHandler) // 로그인 성공시 이동할 핸들러
 		
 			// 비밀번호 자동저장 설정
 			.and()
