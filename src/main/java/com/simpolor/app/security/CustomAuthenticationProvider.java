@@ -20,6 +20,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 	private String rolePrefix = "ROLE_";
 	
 	@Autowired
+	private CustomPasswordEncoder customPasswordEncoder;
+	
+	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
 	
 	@Override
@@ -31,39 +34,33 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 		
 		String username = authentication.getName();
 		String password = authentication.getCredentials().toString();
-		String passwordEnc = customUserDetailsService.passwordEncoder().encode(password);
 		
-		logger.info("-- username : {}", username);
-		logger.info("-- password : {}", password);
-		logger.info("-- passwordEnc : {}", passwordEnc);
+		logger.info("-- authentication.getName() : {}", authentication.getName());
+		logger.info("-- authentication.getCredentials() : {}", authentication.getCredentials().toString());
 	
 		UserDetails userDetails;
-		try {
+		//try {
 			userDetails = customUserDetailsService.loadUserByUsername(username);
 			
 			logger.info("-- userDetails.getUsername() : {}", userDetails.getUsername());
 			logger.info("-- userDetails.getPassword() : {}", userDetails.getPassword());
 			logger.info("-- userDetails.getAuthorities() : {}", userDetails.getAuthorities());
 			
-			logger.info("-- password 비교1 : {}", customUserDetailsService.passwordEncoder().matches(passwordEnc, userDetails.getPassword()));
-			logger.info("-- password 비교2 : {}", customUserDetailsService.passwordEncoder().matches(password, userDetails.getPassword()));
+			logger.info("-- password 비교 : {}", customPasswordEncoder.matches(password, userDetails.getPassword()));
 			
-			if(customUserDetailsService.passwordEncoder().matches(passwordEnc, userDetails.getPassword())) {
-				throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+			if(!customPasswordEncoder.matches(password, userDetails.getPassword())) {
+				throw new BadCredentialsException("The password does not match.");
 			}
 			
 			return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
 			
-		} catch(UsernameNotFoundException e) { 
-			logger.info(e.toString()); 
-			throw new UsernameNotFoundException(e.getMessage()); 
+		/*} catch(UsernameNotFoundException e) { 
+			throw new UsernameNotFoundException("This username does not exist.");
 		} catch(BadCredentialsException e) { 
-			logger.info(e.toString()); 
 			throw new BadCredentialsException(e.getMessage()); 
 		} catch(Exception e) { 
-			logger.info(e.toString()); 
 			throw new RuntimeException(e.getMessage()); 
-		}
+		}*/
 	}
 
 	@Override
