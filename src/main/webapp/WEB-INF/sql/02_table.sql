@@ -34,3 +34,11 @@ CREATE TABLE `access` (
   `access_role` CHAR(5) NULL DEFAULT NULL,
   PRIMARY KEY (`access_seq`)
 );
+
+CREATE TABLE `persistent_logins` (
+  `username` varchar(64) DEFAULT NULL,
+  `series` varchar(64) NOT NULL,
+  `token` varchar(64) DEFAULT NULL,
+  `last_used` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`series`)
+);

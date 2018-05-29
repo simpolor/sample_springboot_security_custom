@@ -8,6 +8,7 @@
         <typeAlias alias="memberRole" type="com.simpolor.app.domain.MemberRole" />
         <typeAlias alias="role" type="com.simpolor.app.domain.Role" />
         <typeAlias alias="access" type="com.simpolor.app.domain.Access" />
+        <typeAlias alias="token" type="com.simpolor.app.domain.Token" />
     </typeAliases>
     
     
@@ -16,5 +17,6 @@
         <mapper resource="mybatis/mapper/member.xml"/>
         <mapper resource="mybatis/mapper/access.xml"/>
         <mapper resource="mybatis/mapper/role.xml"/>
+        <mapper resource="mybatis/mapper/token.xml"/>
     </mappers>
 </configuration>

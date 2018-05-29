@@ -1,6 +1,7 @@
 package com.simpolor.app.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,7 +9,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.simpolor.app.security.CustomAccessDeniedHandler;
@@ -16,16 +17,13 @@ import com.simpolor.app.security.CustomAuthenticationFailureHandler;
 import com.simpolor.app.security.CustomAuthenticationProvider;
 import com.simpolor.app.security.CustomAuthenticationSuccessHandler;
 import com.simpolor.app.security.CustomLogoutSuccessHandler;
+import com.simpolor.app.security.CustomPersistentTokenRepository;
 import com.simpolor.app.security.CustomSecurityInterceptor;
-import com.simpolor.app.security.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
-	
-	@Autowired
-	private CustomUserDetailsService customUserDetailsService;
-	
+		
 	@Autowired // 로그인에 대한 처리
 	private CustomAuthenticationProvider customAuthenticationProvider; 
 	
@@ -43,6 +41,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired // 시큐리티 작업에 대한 인터셉터
 	private CustomSecurityInterceptor customSecurityInterceptor; 
+	
+	@Autowired
+	private CustomPersistentTokenRepository customPersistentTokenRepository;
 	
 	/**
 	 * 스프링 시큐리티의 필터 연결을 설정
@@ -93,8 +94,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 			.rememberMe()
                 .key("remember-me")
                 .rememberMeParameter("remember-me")
-                .rememberMeCookieName("remember-me")
-                .userDetailsService(customUserDetailsService)
+                //.rememberMeCookieName("remember-me")
+                .tokenRepository(customPersistentTokenRepository)
                 .tokenValiditySeconds(86400) // 1일 = 86400초
 		
 			// 로그아웃 설정
@@ -112,31 +113,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 			// 필터 설정 (접근할 URL 및 해당 URL에 따른 권한을 확인)
 			.and()
 			.addFilterBefore(customSecurityInterceptor, FilterSecurityInterceptor.class);
-			
-			//.httpBasic();
-		
-			// 세션과 관련된 처리
-		   	// .sessionManagement() 
 	}
 	
-	/**
-	 * 사용자 세부 서비스를 설정
-	 */
-	/*protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth
-			// 인메모리에 사용자 정보를 세팅
-			.inMemoryAuthentication()  
-			//.inMemoryAuthentication().passwordEncoder(NoOpPasswordEncoder.getInstance())  
-				//.withUser("abc").password("media!@34").roles("USER")
-				.withUser("abc").password("{noop}media!@34").roles("USER")
-				.and()
-				.withUser("admin").password("{noop}media!@34").roles("USER","ADMIN");
-		
-			
-			 // 비밀번호 인코딩에 대한 제외 처리 
-			 // {noop}
-			 // NoOpPasswordEncoder
-    }*/
 	
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(customAuthenticationProvider);
