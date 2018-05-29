@@ -8,7 +8,7 @@ CREATE TABLE `demo` (
 
 CREATE TABLE `member` (
   `member_id` VARCHAR(20) NOT NULL,
-  `member_pw` VARBINARY(50) NOT NULL,
+  `member_pw` VARCHAR(50) NOT NULL,
   `member_name` VARCHAR(20) NULL DEFAULT NULL,
   `member_email` VARCHAR(50) NULL DEFAULT NULL,
   PRIMARY KEY (`member_id`)
