@@ -7,11 +7,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.simpolor.app.security.CustomAccessDeniedHandler;
 import com.simpolor.app.security.CustomAuthenticationFailureHandler;
 import com.simpolor.app.security.CustomAuthenticationProvider;
 import com.simpolor.app.security.CustomAuthenticationSuccessHandler;
+import com.simpolor.app.security.CustomLogoutSuccessHandler;
+import com.simpolor.app.security.CustomSecurityInterceptor;
 import com.simpolor.app.security.CustomUserDetailsService;
 
 @Configuration
@@ -29,6 +34,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired // 로그인실패에 대한 처리
     private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+	
+	@Autowired // 로그아웃 처리
+	private CustomLogoutSuccessHandler customLogoutSuccessHandler;
+	
+	@Autowired // 접근 권한에 대한 처리
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
+	
+	@Autowired // 시큐리티 작업에 대한 인터셉터
+	private CustomSecurityInterceptor customSecurityInterceptor; 
 	
 	/**
 	 * 스프링 시큐리티의 필터 연결을 설정
@@ -53,12 +67,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 			
 			// URL에 따른 권한 체크 
 			.authorizeRequests()
+				.antMatchers("/", "/index").permitAll()
+				.antMatchers("/reload").permitAll()
 				.antMatchers("/member/login").permitAll()
 				.antMatchers("/member/add").permitAll()
-				.antMatchers("/member/**").hasAnyAuthority("USER")
-				.antMatchers("/admin/login").permitAll()
-				.antMatchers("/admin/security").authenticated()
-				.antMatchers("/admin/**").hasAnyAuthority("ADMIN")
+				//.antMatchers("/member/**").hasAnyAuthority("USER")
+				//.antMatchers("/admin/login").permitAll()
+				//.antMatchers("/admin/security").authenticated()
+				//.antMatchers("/admin/**").hasAnyAuthority("ADMIN")
 				//.antMatchers("/admin/**").hasRole("ADMIN") // Role은 앞에 "ROlE_" 권한이 붙음
 				.anyRequest().authenticated()
 			
@@ -85,15 +101,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
             .and()
             .logout()
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-				.logoutSuccessUrl("/");
-				//.and()
-		
-			//.httpBasic();
+				.logoutSuccessUrl("/")
+				.logoutSuccessHandler(customLogoutSuccessHandler)
 		
 			// 예외처리 설정
-			//.exceptionHandling()
-				//.accessDeniedPage("/access/denied");
-				//.accessDeniedHandler(customAccessDeniedHandler);
+			.and()
+			.exceptionHandling()
+				.accessDeniedHandler(customAccessDeniedHandler)
+		
+			// 필터 설정 (접근할 URL 및 해당 URL에 따른 권한을 확인)
+			.and()
+			.addFilterBefore(customSecurityInterceptor, FilterSecurityInterceptor.class);
+			
+			//.httpBasic();
 		
 			// 세션과 관련된 처리
 		   	// .sessionManagement() 
