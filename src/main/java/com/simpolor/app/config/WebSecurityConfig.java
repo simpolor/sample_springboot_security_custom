@@ -78,14 +78,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 				//.antMatchers("/admin/**").hasAnyAuthority("ADMIN")
 				//.antMatchers("/admin/**").hasRole("ADMIN") // Role은 앞에 "ROlE_" 권한이 붙음
 				.anyRequest().authenticated()
+				// .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
+		        //    public <O extends FilterSecurityInterceptor> O postProcess(O fsi) {
+		        //        fsi.setSecurityMetadataSource(customFilterSecurityMetadataSource);
+		        //        fsi.setAccessDecisionManager(customAccessDecisionManager);
+		        //        return fsi;
+		        //    }
+				// })
 			
 			// 로그인 설정
 			.and()
 			.formLogin()
 				.loginPage("/member/login") // 로그인 페이지 ( 컨트롤러를 매핑하지 않으면 기본 제공 로그인 페이지 호출 )
 				.loginProcessingUrl("/member/login") // 로그인 프로세스 처리할 URL
-				.usernameParameter("member_id")
-				.passwordParameter("member_pw")
+				.usernameParameter("member_id") // 로그인 성공시 이동할 핸들러
+				.passwordParameter("member_pw") // 로그인 실패시 이동할 핸들러
 				.successHandler(customAuthenticationSuccessHandler) // 로그인 성공시 이동할 핸들러
 				.failureHandler(customAuthenticationFailureHandler) // 로그인 성공시 이동할 핸들러
 		
@@ -101,9 +108,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 			// 로그아웃 설정
             .and()
             .logout()
-				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-				.logoutSuccessUrl("/")
-				.logoutSuccessHandler(customLogoutSuccessHandler)
+            	// .invalidateHttpSession(true) // 로그아웃시 세션을 모두 삭제
+				.logoutRequestMatcher(new AntPathRequestMatcher("/logout")) // 로그아웃을 진행할 URL
+				// .logoutSuccessUrl("/") // 로그아웃 성공시 이동할 URL
+				.logoutSuccessHandler(customLogoutSuccessHandler) // 로그아웃 성공시 이동할 URL
 		
 			// 예외처리 설정
 			.and()
@@ -111,6 +119,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 				.accessDeniedHandler(customAccessDeniedHandler)
 		
 			// 필터 설정 (접근할 URL 및 해당 URL에 따른 권한을 확인)
+			// .and()
+			// .addFilterBefore(customFilterSecurity, UsernamePasswordAuthenticationFilter.class);
 			.and()
 			.addFilterBefore(customSecurityInterceptor, FilterSecurityInterceptor.class);
 	}
